@@ -147,7 +147,9 @@ class NanoAODSchema(BaseSchema):
             if int(version) < 6:
                 del self.cross_references["FsrPhoton_muonIdx"]
                 del self.cross_references["Muon_fsrPhotonIdx"]
-        self._form["contents"] = self._build_collections(self._form["contents"])
+        self._form["fields"], self._form["contents"] = self._build_collections(
+            self._form["fields"], self._form["contents"]
+        )
         self._form["parameters"]["metadata"]["version"] = self._version
 
     @classmethod
@@ -169,7 +171,8 @@ class NanoAODSchema(BaseSchema):
         """Build the NanoEvents assuming NanoAODv5"""
         return cls(base_form, version="5")
 
-    def _build_collections(self, branch_forms):
+    def _build_collections(self, field_names, input_contents):
+        branch_forms = {k: v for k, v in zip(field_names, input_contents)}
         # parse into high-level records (collections, list collections, and singletons)
         collections = set(k.split("_")[0] for k in branch_forms)
         collections -= set(
@@ -269,7 +272,7 @@ class NanoAODSchema(BaseSchema):
                 output[name].setdefault("parameters", {})
                 output[name]["parameters"].update({"collection_name": name})
 
-        return output
+        return output.keys(), output.values()
 
     @property
     def behavior(self):

@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffea Histograms (deprecated) &mdash; coffea 0.7.20 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Coffea concepts" href="../concepts.html" />
+    <link rel="prev" title="Coffea Processors" href="processor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> coffea
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing coffea</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Coffea by Example</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="nanoevents.html">Reading data with coffea NanoEvents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="applying_corrections.html">Applying corrections to columnar data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="accumulators.html">Analysis tools and accumulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processor.html">Coffea Processors</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coffea Histograms (deprecated)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Filling">Filling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Transformation">Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Styling">Styling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Coffea concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coffea</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../examples.html">Coffea by Example</a></li>
+      <li class="breadcrumb-item active">Coffea Histograms (deprecated)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/histograms.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Coffea-Histograms-(deprecated)">
+<h1>Coffea Histograms (deprecated)<a class="headerlink" href="#Coffea-Histograms-(deprecated)" title="Permalink to this heading"></a></h1>
+<p><em>This feature is deprecated in favor of</em> <a class="reference external" href="https://hist.readthedocs.io/en/latest/">hist</a> <em>and</em> <a class="reference external" href="https://mplhep.readthedocs.io/en/latest/">mplhep</a><em>. A migration guide can be found in discussion</em> <a class="reference external" href="https://github.com/CoffeaTeam/coffea/discussions/705">CoffeaTeam/coffea#705</a></p>
+<p>This is a rendered copy of <a class="reference external" href="https://github.com/CoffeaTeam/coffea/blob/master/binder/histograms.ipynb">histograms.ipynb</a>. You can optionally run it interactively on <a class="reference external" href="https://mybinder.org/v2/gh/coffeateam/coffea/master?filepath=binder%2Fhistograms.ipynb">binder at this link</a></p>
+<p>In scientific python, histograms seem to be considered as a plot style, on equal footing with, e.g. scatter plots. It may well be that HEP is the only place where users need to plot <em>pre-binned</em> data, and thus must use histograms as persistent objects representing reduced data. In Coffea, the <a class="reference external" href="https://coffeateam.github.io/coffea/modules/coffea.hist.html">hist</a> subpackage provides a persistable mergable histogram object. This notebook will discuss a few ways that such objects can be
+manipulated.</p>
+<p>A histogram object roughly goes through three stages in its life:</p>
+<ul class="simple">
+<li><p>Filling</p></li>
+<li><p>Transformation (projection, rebinning, integrating)</p></li>
+<li><p>Plotting</p></li>
+</ul>
+<p>We’ll go over examples of each stage in this notebook, and conclude with some styling examples.</p>
+<section id="Filling">
+<h2>Filling<a class="headerlink" href="#Filling" title="Permalink to this heading"></a></h2>
+<p>Let’s start with filling. We’ll use a random distribution <a class="reference external" href="https://en.wikipedia.org/wiki/ARGUS_distribution">near and dear</a> to of b and c factory physicists, and have the numpy builtin <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.histogram.html">histogram function</a> do the work for us:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+from scipy.stats import argus
+
+vals = argus(chi=.5).rvs(size=1000)
+
+hist = np.histogram(vals)
+print(hist)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(array([ 16,  47,  66,  95, 125, 113, 137, 167, 143,  91]), array([0.002894  , 0.10257766, 0.20226132, 0.30194498, 0.40162865,
+       0.50131231, 0.60099597, 0.70067963, 0.80036329, 0.90004695,
+       0.99973061]))
+</pre></div></div>
+</div>
+<p>So we’re done, right? Probably not: we have more than 1000 events, and probably need to use some map-reduce paradigm to fill the histogram because we can’t keep all 1 billion <code class="docutils literal notranslate"><span class="pre">vals</span></code> in memory. So we need two things: a binning, so that all histograms that were independently created can be added, and the ability to add two histograms.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binning = np.linspace(0, 1, 50)
+
+def add_histos(h1, h2):
+    h1sumw, h1binning = h1
+    h2sumw, h2binning = h2
+    if h1binning.shape == h2binning.shape and np.all(h1binning==h2binning):
+        return h1sumw+h2sumw, h1binning
+    else:
+        raise ValueError(&quot;The histograms have inconsistent binning&quot;)
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>vals2 = argus(chi=.5).rvs(size=1000)
+
+hist1 = np.histogram(vals, bins=binning)
+hist2 = np.histogram(vals, bins=binning)
+
+hist = add_histos(hist1, hist2)
+print(hist)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(array([ 2,  6,  6,  6, 12, 18, 20, 16, 14, 28, 22, 26, 28, 42, 18, 34, 28,
+       48, 40, 42, 42, 60, 46, 62, 46, 52, 46, 38, 52, 54, 50, 58, 72, 54,
+       50, 74, 80, 58, 70, 70, 42, 64, 68, 52, 60, 32, 44, 30, 18]), array([0.        , 0.02040816, 0.04081633, 0.06122449, 0.08163265,
+       0.10204082, 0.12244898, 0.14285714, 0.16326531, 0.18367347,
+       0.20408163, 0.2244898 , 0.24489796, 0.26530612, 0.28571429,
+       0.30612245, 0.32653061, 0.34693878, 0.36734694, 0.3877551 ,
+       0.40816327, 0.42857143, 0.44897959, 0.46938776, 0.48979592,
+       0.51020408, 0.53061224, 0.55102041, 0.57142857, 0.59183673,
+       0.6122449 , 0.63265306, 0.65306122, 0.67346939, 0.69387755,
+       0.71428571, 0.73469388, 0.75510204, 0.7755102 , 0.79591837,
+       0.81632653, 0.83673469, 0.85714286, 0.87755102, 0.89795918,
+       0.91836735, 0.93877551, 0.95918367, 0.97959184, 1.        ]))
+</pre></div></div>
+</div>
+<p>So now we have everything we need to make our own equivalent to ROOT TH1, from a filling perspective:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>class myTH1:
+    def __init__(self, binning):
+        self._binning = binning
+        self._sumw = np.zeros(binning.size - 1)
+
+    def fill(self, values, weights=None):
+        sumw, _ = np.histogram(values, bins=self._binning, weights=weights)
+        self._sumw += sumw
+
+    def __add__(self, other):
+        if not isinstance(other, myTH1):
+            raise ValueError
+        if not np.array_equal(other._binning, self._binning):
+            raise ValueError(&quot;The histograms have inconsistent binning&quot;)
+        out = myTH1(self._binning)
+        out._sumw = self._sumw + other._sumw
+        return out
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binning = np.linspace(0, 1, 50)
+
+h1 = myTH1(binning)
+h1.fill(vals)
+
+h2 = myTH1(binning)
+h2.fill(vals2)
+
+h = h1 + h2
+print(h._sumw)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[ 3.  3.  7.  5.  9. 18. 16. 17. 15. 24. 26. 27. 34. 37. 23. 38. 29. 46.
+ 40. 40. 36. 50. 47. 49. 57. 49. 50. 44. 59. 69. 55. 52. 68. 54. 48. 72.
+ 72. 64. 55. 74. 57. 64. 63. 55. 49. 39. 39. 31. 22.]
+</pre></div></div>
+</div>
+<p>Homework: add <code class="docutils literal notranslate"><span class="pre">sumw2</span></code> support.</p>
+<p>Of course, we might want multidimensional histograms. There is <code class="docutils literal notranslate"><span class="pre">np.histogramdd</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>xyz = np.random.multivariate_normal(mean=[1, 3, 7], cov=np.eye(3), size=10000)
+
+xbins = np.linspace(-10, 10, 20)
+ybins = np.linspace(-10, 10, 20)
+zbins = np.linspace(-10, 10, 20)
+hnumpy = np.histogramdd(xyz, bins=(xbins, ybins, zbins))
+</pre></div>
+</div>
+</div>
+<p>but we are becoming challenged by book-keeping of the variables. The <a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.hist.Hist.html#coffea.hist.Hist">histogram class</a> in Coffea is designed to simplify this operation, and the eventual successor (for filling purposes) <a class="reference external" href="https://github.com/scikit-hep/boost-histogram#usage">boost-histogram</a> has similar syntax.</p>
+<p>In the constructor you specify each axis, either as a numeric <code class="docutils literal notranslate"><span class="pre">Bin</span></code> axis or a categorical <code class="docutils literal notranslate"><span class="pre">Cat</span></code> axis. Each axis constructor takes arguments similar to ROOT TH1 constructors. One can pass an array to the <code class="docutils literal notranslate"><span class="pre">Bin</span></code> axis for non-uniform binning. Then the fill call is as simple as passing the respective arrays to <code class="docutils literal notranslate"><span class="pre">histo.fill</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import coffea.hist as hist
+
+histo = hist.Hist(&quot;Counts&quot;,
+                  hist.Cat(&quot;sample&quot;, &quot;sample name&quot;),
+                  hist.Bin(&quot;x&quot;, &quot;x value&quot;, 20, -10, 10),
+                  hist.Bin(&quot;y&quot;, &quot;y value&quot;, 20, -10, 10),
+                  hist.Bin(&quot;z&quot;, &quot;z value&quot;, 20, -10, 10),
+                 )
+
+histo.fill(sample=&quot;sample 1&quot;, x=xyz[:,0], y=xyz[:,1], z=xyz[:,2])
+
+# suppose we have another sample of xyz values
+xyz_sample2 = np.random.multivariate_normal(mean=[1, 3, 7], cov=np.eye(3), size=10000)
+
+# additionally, lets assume entries in sample 2 have some non-uniform weight equal to atan(distance from origin)
+weight = np.arctan(np.sqrt(np.power(xyz_sample2, 2).sum(axis=1)))
+
+# weight is a reserved keyword in Hist, and can be added to any fill() call
+histo.fill(sample=&quot;sample 2&quot;, x=xyz_sample2[:,0], y=xyz_sample2[:,1], z=xyz_sample2[:,2], weight=weight)
+
+print(histo)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (sample,x,y,z) instance at 0x7fa15cf61390&gt;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># For more details, look at:
+# help(hist.Hist)
+# help(hist.Bin)
+# help(hist.Cat)
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Transformation">
+<h2>Transformation<a class="headerlink" href="#Transformation" title="Permalink to this heading"></a></h2>
+<p>Here are a few examples of transformations on multidimensional histograms in Coffea. For each, the docstring (<code class="docutils literal notranslate"><span class="pre">help(function)</span></code> or shift+tab in Jupyter) provides useful info.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sum all x bins within nominal range (-10, 10)
+histo.sum(&quot;x&quot;, overflow=&#39;none&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (sample,y,z) instance at 0x7fa15ba1af10&gt;
+</pre></div></div>
+</div>
+<p>There is some analog to fancy array slicing for histogram objects, which is supported (with reasonable consistency) in Coffea, where the slice boundaries are physical axis values, rather than bin indices. All values outside the slice range are merged into overflow bins.</p>
+<p>For a lengthy discussion on possible slicing syntax for the future, see <a class="reference external" href="https://github.com/scikit-hep/boost-histogram/issues/35">boost-histogram#35</a>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sliced = histo[:,0:,4:,0:]
+display(sliced)
+display(sliced.identifiers(&quot;y&quot;, overflow=&#39;all&#39;))
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (sample,x,y,z) instance at 0x7fa15de8e650&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;Interval ((-inf, 4)) instance at 0x7fa15ea2c710&gt;,
+ &lt;Interval ([4, 5)) instance at 0x7fa15ea2c790&gt;,
+ &lt;Interval ([5, 6)) instance at 0x7fa15ea2c7d0&gt;,
+ &lt;Interval ([6, 7)) instance at 0x7fa15ea2c810&gt;,
+ &lt;Interval ([7, 8)) instance at 0x7fa15ea2c850&gt;,
+ &lt;Interval ([8, 9)) instance at 0x7fa15ea2c8d0&gt;,
+ &lt;Interval ([9, 10)) instance at 0x7fa15ea2c910&gt;,
+ &lt;Interval ([10, inf)) instance at 0x7fa15ea2c950&gt;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># integrate y bins from -2 to +10
+histo.integrate(&quot;y&quot;, slice(0, 10))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (sample,x,z) instance at 0x7fa15ea2cd50&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># rebin z axis by providing a new axis definition
+histo.rebin(&quot;z&quot;, hist.Bin(&quot;znew&quot;, &quot;rebinned z value&quot;, [-10, -6, 6, 10]))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (sample,x,y,znew) instance at 0x7fa15eb2d710&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># merge categorical axes
+mapping = {
+    &#39;all samples&#39;: [&#39;sample 1&#39;, &#39;sample 2&#39;],
+    &#39;just sample 1&#39;: [&#39;sample 1&#39;],
+}
+histo.group(&quot;sample&quot;, hist.Cat(&quot;cat&quot;, &quot;new category&quot;), mapping)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Hist (cat,x,y,z) instance at 0x7fa15eb307d0&gt;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># scale entire histogram by 3 (in-place)
+histo.scale(3.)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># scale samples by different values (also in-place)
+scales = {
+    &#39;sample 1&#39;: 1.2,
+    &#39;sample 2&#39;: 0.2,
+}
+histo.scale(scales, axis=&#39;sample&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># useful debugging tool: print bins, aka &#39;identifiers&#39;
+display(histo.identifiers(&#39;sample&#39;))
+display(histo.identifiers(&#39;x&#39;))
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;StringBin (sample 1) instance at 0x7fa15e7ab7d0&gt;,
+ &lt;StringBin (sample 2) instance at 0x7fa15e7ab810&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;Interval ([-10, -9)) instance at 0x7fa15ceadfd0&gt;,
+ &lt;Interval ([-9, -8)) instance at 0x7fa15ceadd90&gt;,
+ &lt;Interval ([-8, -7)) instance at 0x7fa15cead350&gt;,
+ &lt;Interval ([-7, -6)) instance at 0x7fa15cead750&gt;,
+ &lt;Interval ([-6, -5)) instance at 0x7fa15ceadb50&gt;,
+ &lt;Interval ([-5, -4)) instance at 0x7fa15cead1d0&gt;,
+ &lt;Interval ([-4, -3)) instance at 0x7fa15ceade90&gt;,
+ &lt;Interval ([-3, -2)) instance at 0x7fa15cead250&gt;,
+ &lt;Interval ([-2, -1)) instance at 0x7fa15ceada90&gt;,
+ &lt;Interval ([-1, 0)) instance at 0x7fa15cead210&gt;,
+ &lt;Interval ([0, 1)) instance at 0x7fa15cead090&gt;,
+ &lt;Interval ([1, 2)) instance at 0x7fa15cead710&gt;,
+ &lt;Interval ([2, 3)) instance at 0x7fa15cead610&gt;,
+ &lt;Interval ([3, 4)) instance at 0x7fa15cead0d0&gt;,
+ &lt;Interval ([4, 5)) instance at 0x7fa15bec6710&gt;,
+ &lt;Interval ([5, 6)) instance at 0x7fa15ce87f90&gt;,
+ &lt;Interval ([6, 7)) instance at 0x7fa15eb361d0&gt;,
+ &lt;Interval ([7, 8)) instance at 0x7fa15eb36250&gt;,
+ &lt;Interval ([8, 9)) instance at 0x7fa15eb36310&gt;,
+ &lt;Interval ([9, 10)) instance at 0x7fa15eb363d0&gt;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># bin contents are accessed using values
+histo.sum(&#39;x&#39;, &#39;y&#39;).values(sumw2=False)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{(&#39;sample 1&#39;,): array([0.00000e+00, 0.00000e+00, 0.00000e+00, 0.00000e+00, 0.00000e+00,
+        0.00000e+00, 0.00000e+00, 0.00000e+00, 0.00000e+00, 0.00000e+00,
+        0.00000e+00, 0.00000e+00, 3.60000e+00, 5.40000e+01, 7.23600e+02,
+        4.83120e+03, 1.24164e+04, 1.24344e+04, 4.68720e+03, 8.13600e+02]),
+ (&#39;sample 2&#39;,): array([0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+        0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+        0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
+        7.67352230e-01, 1.23975181e+01, 1.91084135e+02, 1.16950599e+03,
+        3.00209800e+03, 2.88614286e+03, 1.20687727e+03, 1.68492970e+02])}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># data can be exported to ROOT via uproot3 (soon uproot v4 as well), but only 1D
+import uproot3
+import os
+
+if os.path.exists(&quot;output.root&quot;):
+    os.remove(&quot;output.root&quot;)
+
+outputfile = uproot3.create(&quot;output.root&quot;)
+h = histo.sum(&#39;x&#39;, &#39;y&#39;)
+for sample in h.identifiers(&#39;sample&#39;):
+    outputfile[sample.name] = hist.export1d(h.integrate(&#39;sample&#39;, sample))
+outputfile.close()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/lagray/miniconda3/envs/coffea-work/lib/python3.7/site-packages/uproot3/__init__.py:138: FutureWarning: Consider switching from &#39;uproot3&#39; to &#39;uproot&#39;, since the new interface became the default in 2020.
+
+    pip install -U uproot
+
+In Python:
+
+    &gt;&gt;&gt; import uproot
+    &gt;&gt;&gt; with uproot.open(...) as file:
+    ...
+
+  FutureWarning
+</pre></div></div>
+</div>
+</section>
+<section id="Plotting">
+<h2>Plotting<a class="headerlink" href="#Plotting" title="Permalink to this heading"></a></h2>
+<p>The most integrated plotting utility in the scientific python ecosystem, by far, is <a class="reference external" href="https://matplotlib.org/">matplotlib</a>. However, as we will see, it is not tailored to HEP needs.</p>
+<p>Let’s start by looking at basic mpl histogramming.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+import matplotlib.pyplot as plt
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>vals = argus(chi=.5).rvs(size=1000)
+
+# notice the semicolon, which prevents display of the return values
+plt.hist(vals);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_29_0.png" src="../_images/notebooks_histograms_29_0.png" />
+</div>
+</div>
+<p>Suppose we want to plot pre-binned data, for example from our earlier <code class="docutils literal notranslate"><span class="pre">np.histogram</span></code> usage. Here we start running into the edge of typical mpl usage. As mentioned before, apparently HEP is the only regular user of pre-binned histograms.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binning = np.linspace(0, 1, 50)
+
+h1vals, h1bins = np.histogram(vals, bins=binning)
+plt.step(x=h1bins[:-1], y=h1vals, where=&#39;post&#39;);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_31_0.png" src="../_images/notebooks_histograms_31_0.png" />
+</div>
+</div>
+<p>To facilitate these operations, there is a package called <a class="reference external" href="https://github.com/scikit-hep/mplhep">mplhep</a>. This package is available standlaone, but it is also used internally by the <code class="docutils literal notranslate"><span class="pre">coffea.hist</span></code> subpackage to provide several convenience functions to aid in plotting <code class="docutils literal notranslate"><span class="pre">Hist</span></code> objects:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.hist.plot1d.html#coffea.hist.plot1d">plot1d</a>: Create a 1D plot from a 1D or 2D Hist object</p></li>
+<li><p><a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.hist.plotratio.html#coffea.hist.plotratio">plotratio</a>: Create a ratio plot, dividing two compatible histograms</p></li>
+<li><p><a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.hist.plot2d.html#coffea.hist.plot2d">plot2d</a>: Create a 2D plot from a 2D Hist object</p></li>
+<li><p><a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.hist.plotgrid.html#coffea.hist.plotgrid">plotgrid</a>: Create a grid of plots, enumerating identifiers on up to 3 axes</p></li>
+</ul>
+<p>Below are some simple examples of using each function on our <code class="docutils literal notranslate"><span class="pre">histo</span></code> object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>hist.plot1d(histo.sum(&quot;x&quot;, &quot;y&quot;), overlay=&#39;sample&#39;);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_33_0.png" src="../_images/notebooks_histograms_33_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>hist.plot1d(histo.sum(&quot;x&quot;, &quot;y&quot;), overlay=&#39;sample&#39;, stack=True);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_34_0.png" src="../_images/notebooks_histograms_34_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>hist.plot2d(histo.sum(&#39;x&#39;, &#39;sample&#39;), xaxis=&#39;y&#39;);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_35_0.png" src="../_images/notebooks_histograms_35_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># make coarse binned hist and look at several distributions
+hnew = (
+    histo
+    .rebin(&quot;y&quot;, hist.Bin(&quot;ynew&quot;, &quot;rebinned y value&quot;, [0, 3, 5]))
+    .rebin(&quot;z&quot;, hist.Bin(&quot;znew&quot;, &quot;rebinned z value&quot;, [5, 8, 10]))
+)
+
+hist.plotgrid(hnew, row=&#39;ynew&#39;, col=&#39;znew&#39;, overlay=&#39;sample&#39;);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_36_0.png" src="../_images/notebooks_histograms_36_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>numerator = histo.integrate(&#39;sample&#39;, &#39;sample 1&#39;).sum(&#39;y&#39;, &#39;z&#39;)
+denominator = histo.sum(&#39;sample&#39;, &#39;y&#39;, &#39;z&#39;)
+
+numerator.label = r&#39;$\epsilon$&#39;
+ax = hist.plotratio(
+    num=numerator,
+    denom=denominator,
+    error_opts={&#39;color&#39;: &#39;k&#39;, &#39;marker&#39;: &#39;.&#39;},
+    unc=&#39;clopper-pearson&#39;
+)
+ax.set_ylim(0.6, 1.)
+ax.set_xlim(-10, 10)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/Users/lagray/coffea/coffea/binder/coffea/hist/plot.py:357: RuntimeWarning: invalid value encountered in true_divide
+  rsumw = sumw_num / sumw_denom
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-10.0, 10.0)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_37_2.png" src="../_images/notebooks_histograms_37_2.png" />
+</div>
+</div>
+</section>
+<section id="Styling">
+<h2>Styling<a class="headerlink" href="#Styling" title="Permalink to this heading"></a></h2>
+<p>We’ve covered the basics of plotting, now let’s go over some styling options. To make things more interesting, we’ll load some electron and muon Lorentz vectors from simulated <span class="math notranslate nohighlight">\(H\rightarrow ZZ^{*}\)</span> events into awkward arrays and then plot some kinematic quantities for them, making liberal use of the matplotlib styling options which are exposed through the coffea plotting utilities.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>!curl -OL http://scikit-hep.org/uproot3/examples/HZZ.root
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  212k  100  212k    0     0  7601k      0 --:--:-- --:--:-- --:--:-- 7601k
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import uproot
+import awkward as ak
+from coffea.nanoevents.methods import vector
+ak.behavior.update(vector.behavior)
+
+fin = uproot.open(&quot;HZZ.root&quot;)
+tree = fin[&quot;events&quot;]
+
+# let&#39;s build the lepton arrays back into objects
+# in the future, some of this verbosity can be reduced
+arrays = {k.replace(&#39;Electron_&#39;, &#39;&#39;): v for k, v in tree.arrays(filter_name=&quot;Electron_*&quot;, how=dict).items()}
+electrons = ak.zip({&#39;x&#39;: arrays.pop(&#39;Px&#39;),
+                    &#39;y&#39;: arrays.pop(&#39;Py&#39;),
+                    &#39;z&#39;: arrays.pop(&quot;Pz&quot;),
+                    &#39;t&#39;: arrays.pop(&quot;E&quot;),
+                    },
+                    with_name=&quot;LorentzVector&quot;
+)
+
+
+arrays = {k.replace(&#39;Muon_&#39;, &#39;&#39;): v for k,v in tree.arrays(filter_name=&quot;Muon_*&quot;, how=dict).items()}
+muons = ak.zip({&#39;x&#39;: arrays.pop(&#39;Px&#39;),
+                &#39;y&#39;: arrays.pop(&#39;Py&#39;),
+                &#39;z&#39;: arrays.pop(&quot;Pz&quot;),
+                &#39;t&#39;: arrays.pop(&quot;E&quot;),
+                },
+                with_name=&quot;LorentzVector&quot;
+)
+
+print(&quot;Avg. electrons/event:&quot;, ak.sum(ak.num(electrons))/tree.num_entries)
+print(&quot;Avg. muons/event:&quot;, ak.sum(ak.num(muons))/tree.num_entries)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Avg. electrons/event: 0.07063197026022305
+Avg. muons/event: 1.579925650557621
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lepton_kinematics = hist.Hist(
+    &quot;Events&quot;,
+    hist.Cat(&quot;flavor&quot;, &quot;Lepton flavor&quot;),
+    hist.Bin(&quot;pt&quot;, &quot;$p_{T}$&quot;, 19, 10, 100),
+    hist.Bin(&quot;eta&quot;, &quot;$\eta$&quot;, [-2.5, -1.4, 0, 1.4, 2.5]),
+)
+
+# Pass keyword arguments to fill, all arrays must be flat numpy arrays
+# User is responsible for ensuring all arrays have same jagged structure!
+lepton_kinematics.fill(
+    flavor=&quot;electron&quot;,
+    pt=ak.flatten(electrons.pt),
+    eta=ak.flatten(electrons.eta)
+)
+lepton_kinematics.fill(
+    flavor=&quot;muon&quot;,
+    pt=ak.flatten(muons.pt),
+    eta=ak.flatten(muons.eta)
+)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Now we can start to manipulate this single histogram to plot different views of the data
+# here we look at lepton pt for all eta
+lepton_pt = lepton_kinematics.integrate(&quot;eta&quot;)
+
+ax = hist.plot1d(
+    lepton_pt,
+    overlay=&quot;flavor&quot;,
+    stack=True,
+    fill_opts={&#39;alpha&#39;: .5, &#39;edgecolor&#39;: (0,0,0,0.3)}
+)
+# all plot calls return the matplotlib axes object, from which
+# you can edit features afterwards using matplotlib object-oriented syntax
+# e.g. maybe you really miss &#39;90s graphics...
+ax.get_legend().shadow = True
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_42_0.png" src="../_images/notebooks_histograms_42_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Clearly the yields are much different, are the shapes similar? We can check by setting `density=True`
+lepton_pt.label = &quot;Density&quot;
+ax = hist.plot1d(lepton_pt, overlay=&quot;flavor&quot;, density=True)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_43_0.png" src="../_images/notebooks_histograms_43_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Let&#39;s stack them, after defining some nice styling
+stack_fill_opts = {
+    &#39;alpha&#39;: 0.8,
+    &#39;edgecolor&#39;:(0,0,0,.5)
+}
+stack_error_opts = {
+    &#39;label&#39;:&#39;Stat. Unc.&#39;,
+    &#39;hatch&#39;:&#39;///&#39;,
+    &#39;facecolor&#39;:&#39;none&#39;,
+    &#39;edgecolor&#39;:(0,0,0,.5),
+    &#39;linewidth&#39;: 0
+}
+# maybe we want to compare different eta regions
+# plotgrid accepts row and column axes, and creates a grid of 1d plots as appropriate
+ax = hist.plotgrid(
+    lepton_kinematics,
+    row=&quot;eta&quot;,
+    overlay=&quot;flavor&quot;,
+    stack=True,
+    fill_opts=stack_fill_opts,
+    error_opts=stack_error_opts,
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_44_0.png" src="../_images/notebooks_histograms_44_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Here we create some pseudodata for the pt histogram so we can make a nice data/mc plot
+pthist = lepton_kinematics.sum(&#39;eta&#39;)
+bin_values = pthist.axis(&#39;pt&#39;).centers()
+poisson_means = pthist.sum(&#39;flavor&#39;).values()[()]
+values = np.repeat(bin_values, np.random.poisson(poisson_means))
+pthist.fill(flavor=&#39;pseudodata&#39;, pt=values)
+
+# Set nicer labels, by accessing the string bins&#39; label property
+pthist.axis(&#39;flavor&#39;).index(&#39;electron&#39;).label = &#39;e Flavor&#39;
+pthist.axis(&#39;flavor&#39;).index(&#39;muon&#39;).label = r&#39;$\mu$ Flavor&#39;
+pthist.axis(&#39;flavor&#39;).index(&#39;pseudodata&#39;).label = r&#39;Pseudodata from e/$\mu$&#39;
+
+# using regular expressions on flavor name to select just the data
+# another method would be to fill a separate data histogram
+import re
+notdata = re.compile(&#39;(?!pseudodata)&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># make a nice ratio plot, adjusting some font sizes
+plt.rcParams.update({
+    &#39;font.size&#39;: 14,
+    &#39;axes.titlesize&#39;: 18,
+    &#39;axes.labelsize&#39;: 18,
+    &#39;xtick.labelsize&#39;: 12,
+    &#39;ytick.labelsize&#39;: 12
+})
+fig, (ax, rax) = plt.subplots(
+    nrows=2,
+    ncols=1,
+    figsize=(7,7),
+    gridspec_kw={&quot;height_ratios&quot;: (3, 1)},
+    sharex=True
+)
+fig.subplots_adjust(hspace=.07)
+
+# Here is an example of setting up a color cycler to color the various fill patches
+# We get the colors from this useful utility: http://colorbrewer2.org/#type=qualitative&amp;scheme=Paired&amp;n=6
+from cycler import cycler
+colors = [&#39;#a6cee3&#39;,&#39;#1f78b4&#39;,&#39;#b2df8a&#39;,&#39;#33a02c&#39;,&#39;#fb9a99&#39;,&#39;#e31a1c&#39;]
+ax.set_prop_cycle(cycler(color=colors))
+
+fill_opts = {
+    &#39;edgecolor&#39;: (0,0,0,0.3),
+    &#39;alpha&#39;: 0.8
+}
+error_opts = {
+    &#39;label&#39;: &#39;Stat. Unc.&#39;,
+    &#39;hatch&#39;: &#39;///&#39;,
+    &#39;facecolor&#39;: &#39;none&#39;,
+    &#39;edgecolor&#39;: (0,0,0,.5),
+    &#39;linewidth&#39;: 0
+}
+data_err_opts = {
+    &#39;linestyle&#39;: &#39;none&#39;,
+    &#39;marker&#39;: &#39;.&#39;,
+    &#39;markersize&#39;: 10.,
+    &#39;color&#39;: &#39;k&#39;,
+    &#39;elinewidth&#39;: 1,
+}
+
+# plot the MC first
+hist.plot1d(
+    pthist[notdata],
+    overlay=&quot;flavor&quot;,
+    ax=ax,
+    clear=False,
+    stack=True,
+    line_opts=None,
+    fill_opts=fill_opts,
+    error_opts=error_opts
+)
+# now the pseudodata, setting clear=False to avoid overwriting the previous plot
+hist.plot1d(
+    pthist[&#39;pseudodata&#39;],
+    overlay=&quot;flavor&quot;,
+    ax=ax,
+    clear=False,
+    error_opts=data_err_opts
+)
+
+ax.autoscale(axis=&#39;x&#39;, tight=True)
+ax.set_ylim(0, None)
+ax.set_xlabel(None)
+leg = ax.legend()
+
+# now we build the ratio plot
+hist.plotratio(
+    num=pthist[&#39;pseudodata&#39;].sum(&quot;flavor&quot;),
+    denom=pthist[notdata].sum(&quot;flavor&quot;),
+    ax=rax,
+    error_opts=data_err_opts,
+    denom_fill_opts={},
+    guide_opts={},
+    unc=&#39;num&#39;
+)
+rax.set_ylabel(&#39;Ratio&#39;)
+rax.set_ylim(0,2)
+
+# add some labels
+coffee = plt.text(0., 1., u&quot;☕&quot;,
+                  fontsize=28,
+                  horizontalalignment=&#39;left&#39;,
+                  verticalalignment=&#39;bottom&#39;,
+                  transform=ax.transAxes
+                 )
+lumi = plt.text(1., 1., r&quot;1 fb$^{-1}$ (?? TeV)&quot;,
+                fontsize=16,
+                horizontalalignment=&#39;right&#39;,
+                verticalalignment=&#39;bottom&#39;,
+                transform=ax.transAxes
+               )
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_46_0.png" src="../_images/notebooks_histograms_46_0.png" />
+</div>
+</div>
+<p>Some further styling tools are available through the <code class="docutils literal notranslate"><span class="pre">mplhep</span></code> package. In particular, there are several stylesheets that update <code class="docutils literal notranslate"><span class="pre">plt.rcParams</span></code> to conform with experiment style recommendations regarding font face, font sizes, tick mark styles, and other such things. Below is an example application.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import mplhep
+plt.style.use(mplhep.style.ROOT)
+
+# Compare this to the style of the plot drawn previously
+ax = hist.plot1d(lepton_pt, overlay=&quot;flavor&quot;, density=True)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_histograms_48_0.png" src="../_images/notebooks_histograms_48_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="processor.html" class="btn btn-neutral float-left" title="Coffea Processors" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../concepts.html" class="btn btn-neutral float-right" title="Coffea concepts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Fermi National Accelerator Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

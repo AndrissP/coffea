@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applying corrections to columnar data &mdash; coffea 0.7.20 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Analysis tools and accumulators" href="accumulators.html" />
+    <link rel="prev" title="Reading data with coffea NanoEvents" href="nanoevents.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> coffea
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing coffea</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Coffea by Example</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="nanoevents.html">Reading data with coffea NanoEvents</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Applying corrections to columnar data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Coffea-lookup_tools">Coffea lookup_tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Opening-a-root-file-and-using-it-as-a-lookup-table">Opening a root file and using it as a lookup table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Building-and-using-your-own-correction-from-a-histogram">Building and using your own correction from a histogram</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#CMS-high-level-tools">CMS high-level tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Applying-energy-scale-transformations-with-jetmet_tools">Applying energy scale transformations with jetmet_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Applying-CMS-b-tagging-corrections-with-btag_tools">Applying CMS b-tagging corrections with btag_tools</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Using-correctionlib">Using correctionlib</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="accumulators.html">Analysis tools and accumulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processor.html">Coffea Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="histograms.html">Coffea Histograms (deprecated)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Coffea concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coffea</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../examples.html">Coffea by Example</a></li>
+      <li class="breadcrumb-item active">Applying corrections to columnar data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/applying_corrections.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Applying-corrections-to-columnar-data">
+<h1>Applying corrections to columnar data<a class="headerlink" href="#Applying-corrections-to-columnar-data" title="Permalink to this heading"></a></h1>
+<p>Here we will show how to apply corrections to columnar data using:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">coffea.lookup_tools</span></code> package, which is designed to read in ROOT histograms and a variety of data file formats popular within CMS into a standardized lookup table format;</p></li>
+<li><p>CMS-specific extensions to the above, for jet corrections (<code class="docutils literal notranslate"><span class="pre">coffea.jetmet_tools</span></code>) and b-tagging efficiencies/uncertainties (<code class="docutils literal notranslate"><span class="pre">coffea.btag_tools</span></code>);</p></li>
+<li><p>the <a class="reference external" href="https://cms-nanoaod.github.io/correctionlib/">correctionlib</a> package, which provides a experiment-agnostic serializable data format for common correction functions.</p></li>
+</ul>
+<p><strong>Test data</strong>: We’ll use NanoEvents to construct some test data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import awkward as ak
+from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
+
+fname = &quot;https://raw.githubusercontent.com/CoffeaTeam/coffea/master/tests/samples/nano_dy.root&quot;
+events = NanoEventsFactory.from_root(
+    fname,
+    schemaclass=NanoAODSchema.v6,
+    metadata={&quot;dataset&quot;: &quot;DYJets&quot;},
+).events()
+</pre></div>
+</div>
+</div>
+<section id="Coffea-lookup_tools">
+<h2>Coffea lookup_tools<a class="headerlink" href="#Coffea-lookup_tools" title="Permalink to this heading"></a></h2>
+<p>The entrypoint for <code class="docutils literal notranslate"><span class="pre">coffea.lookup_tools</span></code> is the <a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.lookup_tools.extractor.html#coffea.lookup_tools.extractor">extractor class</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from coffea.lookup_tools import extractor
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-bash notranslate"><div class="highlight"><pre><span></span>%%bash
+<span class="c1"># download some sample correction sources</span>
+mkdir -p data
+<span class="nb">pushd</span> data
+<span class="nv">PREFIX</span><span class="o">=</span>https://raw.githubusercontent.com/CoffeaTeam/coffea/master/tests/samples
+curl -Os <span class="nv">$PREFIX</span>/testSF2d.histo.root
+curl -Os <span class="nv">$PREFIX</span>/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi.jec.txt
+curl -Os <span class="nv">$PREFIX</span>/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi.junc.txt
+curl -Os <span class="nv">$PREFIX</span>/DeepCSV_102XSF_V1.btag.csv.gz
+<span class="nb">popd</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+~/src/coffea/binder/data ~/src/coffea/binder
+~/src/coffea/binder
+</pre></div></div>
+</div>
+<section id="Opening-a-root-file-and-using-it-as-a-lookup-table">
+<h3>Opening a root file and using it as a lookup table<a class="headerlink" href="#Opening-a-root-file-and-using-it-as-a-lookup-table" title="Permalink to this heading"></a></h3>
+<p>In <a class="reference external" href="https://github.com/CoffeaTeam/coffea/tree/master/tests/samples">tests/samples</a>, there is an example file with a <code class="docutils literal notranslate"><span class="pre">TH2F</span></code> histogram named <code class="docutils literal notranslate"><span class="pre">scalefactors_Tight_Electron</span></code>. The following code reads that histogram into an <a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.lookup_tools.evaluator.html#coffea.lookup_tools.evaluator">evaluator</a> instance, under the key <code class="docutils literal notranslate"><span class="pre">testSF2d</span></code> and applies it to some electrons.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ext = extractor()
+# several histograms can be imported at once using wildcards (*)
+ext.add_weight_sets([&quot;testSF2d scalefactors_Tight_Electron data/testSF2d.histo.root&quot;])
+ext.finalize()
+
+evaluator = ext.make_evaluator()
+
+print(&quot;available evaluator keys:&quot;)
+for key in evaluator.keys():
+    print(&quot;\t&quot;, key)
+print(&quot;testSF2d:&quot;, evaluator[&#39;testSF2d&#39;])
+print(&quot;type of testSF2d:&quot;, type(evaluator[&#39;testSF2d&#39;]))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+available evaluator keys:
+         testSF2d
+testSF2d: 2 dimensional histogram with axes:
+        1: [-2.5   -2.    -1.566 -1.444 -0.8    0.     0.8    1.444  1.566  2.
+  2.5  ]
+        2: [ 10.  20.  35.  50.  90. 150. 500.]
+
+type of testSF2d: &lt;class &#39;coffea.lookup_tools.dense_lookup.dense_lookup&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(&quot;Electron eta:&quot;, events.Electron.eta)
+print(&quot;Electron pt:&quot;, events.Electron.pt)
+print(&quot;Scale factor:&quot;, evaluator[&quot;testSF2d&quot;](events.Electron.eta, events.Electron.pt))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Electron eta: [[], [1.83], [-0.293, -0.904], [-2.19, 1.65], ... [-0.0595], [], [0.381], [], []]
+Electron pt: [[], [29.6], [60.1, 51.7], [10.7, 8.6], [], ... [], [15.6], [], [7.68], [], []]
+Scale factor: [[], [0.909], [0.953, 0.972], [0.807, 0.827], ... [0.941], [], [0.946], [], []]
+</pre></div></div>
+</div>
+</section>
+<section id="Building-and-using-your-own-correction-from-a-histogram">
+<h3>Building and using your own correction from a histogram<a class="headerlink" href="#Building-and-using-your-own-correction-from-a-histogram" title="Permalink to this heading"></a></h3>
+<p>To use a histogram or ratio of histograms to build your own correction, you can use <code class="docutils literal notranslate"><span class="pre">lookup_tools</span></code> to simplify the implementation. Here we create some mock data for two slightly different pt and eta spectra (say, from two different generators) and derive a correction to reweight one sample to the other.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+import hist
+import matplotlib.pyplot as plt
+
+dists = (
+    hist.Hist.new
+    .StrCat([&quot;gen1&quot;, &quot;gen2&quot;, &quot;gen2rwt&quot;], name=&quot;dataset&quot;)
+    .Reg(20, 0, 100, name=&quot;pt&quot;)
+    .Reg(4, -3, 3, name=&quot;eta&quot;)
+    .Weight()
+    .fill(
+        dataset=&quot;gen1&quot;,
+        pt=np.random.exponential(scale=10.0, size=10000) + np.random.exponential(scale=10.0, size=10000),
+        eta=np.random.normal(scale=1, size=10000)
+    )
+    .fill(
+        dataset=&quot;gen2&quot;,
+        pt=np.random.exponential(scale=10.0, size=10000) + np.random.exponential(scale=15.0, size=10000),
+        eta=np.random.normal(scale=1.1, size=10000)
+    )
+)
+
+fig, ax = plt.subplots()
+dists[:, :, sum].plot1d(ax=ax)
+ax.legend(title=&quot;dataset&quot;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.legend.Legend at 0x134ceb190&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_applying_corrections_10_1.png" src="../_images/notebooks_applying_corrections_10_1.png" />
+</div>
+</div>
+<p>Now we derive a correction as a function of <span class="math notranslate nohighlight">\(p_T\)</span> and <span class="math notranslate nohighlight">\(\eta\)</span> to <code class="docutils literal notranslate"><span class="pre">gen2</span></code> such that it agrees with <code class="docutils literal notranslate"><span class="pre">gen1</span></code>. We’ll set it to 1 anywhere we run out of statistics for the correction, to avoid divide by zero issues</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from coffea.lookup_tools.dense_lookup import dense_lookup
+
+num = dists[&quot;gen1&quot;, :, :].values()
+den = dists[&quot;gen2&quot;, :, :].values()
+sf = np.where(
+    (num &gt; 0) &amp; (den &gt; 0),
+    num / np.maximum(den, 1) * den.sum() / num.sum(),
+    1.0,
+)
+
+corr = dense_lookup(sf, [ax.edges for ax in dists.axes[1:]])
+print(corr)
+
+# a quick way to plot the scale factor is to steal the axis definitions from the input histograms:
+sfhist = hist.Hist(*dists.axes[1:], data=sf)
+sfhist.plot2d()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2 dimensional histogram with axes:
+        1: [  0.   5.  10.  15.  20.  25.  30.  35.  40.  45.  50.  55.  60.  65.
+  70.  75.  80.  85.  90.  95. 100.]
+        2: [-3.  -1.5  0.   1.5  3. ]
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ColormeshArtists(pcolormesh=&lt;matplotlib.collections.QuadMesh object at 0x134eac6a0&gt;, cbar=&lt;matplotlib.colorbar.Colorbar object at 0x134eb87c0&gt;, text=[])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_applying_corrections_12_2.png" src="../_images/notebooks_applying_corrections_12_2.png" />
+</div>
+</div>
+<p>Now we generate some new mock data as if it was drawn from <code class="docutils literal notranslate"><span class="pre">gen2</span></code> and reweight it with our <code class="docutils literal notranslate"><span class="pre">corr</span></code> to match <code class="docutils literal notranslate"><span class="pre">gen1</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ptvals = np.random.exponential(scale=10.0, size=10000) + np.random.exponential(scale=15.0, size=10000)
+etavals = np.random.normal(scale=1.1, size=10000)
+
+dists.fill(
+    dataset=&quot;gen2rwt&quot;,
+    pt=ptvals,
+    eta=etavals,
+    weight=corr(ptvals, etavals)
+)
+
+fig, ax = plt.subplots()
+dists[:, :, sum].plot1d(ax=ax)
+ax.legend(title=&quot;dataset&quot;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.legend.Legend at 0x134f44f40&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_applying_corrections_14_1.png" src="../_images/notebooks_applying_corrections_14_1.png" />
+</div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">corr()</span></code> can accept also jagged arrays if need be.</p>
+</section>
+</section>
+<section id="CMS-high-level-tools">
+<h2>CMS high-level tools<a class="headerlink" href="#CMS-high-level-tools" title="Permalink to this heading"></a></h2>
+<section id="Applying-energy-scale-transformations-with-jetmet_tools">
+<h3>Applying energy scale transformations with jetmet_tools<a class="headerlink" href="#Applying-energy-scale-transformations-with-jetmet_tools" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">coffea.jetmet_tools</span></code> package provides a convenience class <a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.jetmet_tools.JetTransformer.html#coffea.jetmet_tools.JetTransformer">JetTransformer</a> which applies specified corrections and computes uncertainties in one call. First we build the desired jet correction stack to apply. This will usually be some set of the various JEC and JER correction text files that depends on the jet cone size (AK4, AK8) and the pileup mitigation algorithm, as
+well as the data-taking year they are associated with.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from coffea.jetmet_tools import FactorizedJetCorrector, JetCorrectionUncertainty
+from coffea.jetmet_tools import JECStack, CorrectedJetsFactory
+import awkward as ak
+import numpy as np
+
+ext = extractor()
+ext.add_weight_sets([
+    &quot;* * data/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi.jec.txt&quot;,
+    &quot;* * data/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi.junc.txt&quot;,
+])
+ext.finalize()
+
+jec_stack_names = [
+    &quot;Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi&quot;,
+    &quot;Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi&quot;
+]
+
+evaluator = ext.make_evaluator()
+
+jec_inputs = {name: evaluator[name] for name in jec_stack_names}
+jec_stack = JECStack(jec_inputs)
+### more possibilities are available if you send in more pieces of the JEC stack
+# mc2016_ak8_jxform = JECStack([&quot;more&quot;, &quot;names&quot;, &quot;of&quot;, &quot;JEC parts&quot;])
+
+print(dir(evaluator))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi&#39;, &#39;Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi&#39;]
+</pre></div></div>
+</div>
+<p>Now we prepare some auxilary variables that are used to parameterize the jet energy corrections, such as jet area, mass, and event <span class="math notranslate nohighlight">\(\rho\)</span> (mean pileup energy density), and pass all of these into the <code class="docutils literal notranslate"><span class="pre">CorrectedJetsFactory</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>name_map = jec_stack.blank_name_map
+name_map[&#39;JetPt&#39;] = &#39;pt&#39;
+name_map[&#39;JetMass&#39;] = &#39;mass&#39;
+name_map[&#39;JetEta&#39;] = &#39;eta&#39;
+name_map[&#39;JetA&#39;] = &#39;area&#39;
+
+jets = events.Jet
+
+jets[&#39;pt_raw&#39;] = (1 - jets[&#39;rawFactor&#39;]) * jets[&#39;pt&#39;]
+jets[&#39;mass_raw&#39;] = (1 - jets[&#39;rawFactor&#39;]) * jets[&#39;mass&#39;]
+jets[&#39;pt_gen&#39;] = ak.values_astype(ak.fill_none(jets.matched_gen.pt, 0), np.float32)
+jets[&#39;rho&#39;] = ak.broadcast_arrays(events.fixedGridRhoFastjetAll, jets.pt)[0]
+name_map[&#39;ptGenJet&#39;] = &#39;pt_gen&#39;
+name_map[&#39;ptRaw&#39;] = &#39;pt_raw&#39;
+name_map[&#39;massRaw&#39;] = &#39;mass_raw&#39;
+name_map[&#39;Rho&#39;] = &#39;rho&#39;
+
+events_cache = events.caches[0]
+corrector = FactorizedJetCorrector(
+    Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi=evaluator[&#39;Fall17_17Nov2017_V32_MC_L2Relative_AK4PFPuppi&#39;],
+)
+uncertainties = JetCorrectionUncertainty(
+    Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi=evaluator[&#39;Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFPuppi&#39;]
+)
+
+jet_factory = CorrectedJetsFactory(name_map, jec_stack)
+corrected_jets = jet_factory.build(jets, lazy_cache=events_cache)
+
+print(&#39;starting columns:&#39;, set(ak.fields(jets)))
+print(&#39;new columns:&#39;, set(ak.fields(corrected_jets)) - set(ak.fields(jets)))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+starting columns: {&#39;btagCSVV2&#39;, &#39;electronIdx1&#39;, &#39;electronIdx2&#39;, &#39;eta&#39;, &#39;muonSubtrFactor&#39;, &#39;btagCMVA&#39;, &#39;bRegCorr&#39;, &#39;btagDeepFlavB&#39;, &#39;jercCHPUF&#39;, &#39;chEmEF&#39;, &#39;pt_raw&#39;, &#39;muonIdx2&#39;, &#39;nMuons&#39;, &#39;cleanmask&#39;, &#39;muonIdx1G&#39;, &#39;genJetIdxG&#39;, &#39;puId&#39;, &#39;muEF&#39;, &#39;mass&#39;, &#39;genJetIdx&#39;, &#39;muonIdx1&#39;, &#39;area&#39;, &#39;hadronFlavour&#39;, &#39;btagDeepC&#39;, &#39;qgl&#39;, &#39;rawFactor&#39;, &#39;mass_raw&#39;, &#39;partonFlavour&#39;, &#39;phi&#39;, &#39;btagDeepFlavC&#39;, &#39;nElectrons&#39;, &#39;electronIdx2G&#39;, &#39;rho&#39;, &#39;btagDeepB&#39;, &#39;neHEF&#39;, &#39;pt_gen&#39;, &#39;muonIdx2G&#39;, &#39;neEmEF&#39;, &#39;electronIdx1G&#39;, &#39;jercCHF&#39;, &#39;muonIdxG&#39;, &#39;jetId&#39;, &#39;nConstituents&#39;, &#39;electronIdxG&#39;, &#39;bRegRes&#39;, &#39;pt&#39;, &#39;chHEF&#39;}
+new columns: {&#39;jet_energy_correction&#39;, &#39;mass_orig&#39;, &#39;pt_orig&#39;, &#39;pt_jec&#39;, &#39;JES_jes&#39;, &#39;mass_jec&#39;, &#39;jet_energy_uncertainty_jes&#39;}
+</pre></div></div>
+</div>
+<p>Below we show that the corrected jets indeed have a different <span class="math notranslate nohighlight">\(p_T\)</span> and mass than we started with</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(&#39;untransformed pt ratios&#39;, jets.pt/jets.pt_raw)
+print(&#39;untransformed mass ratios&#39;, jets.mass/jets.mass_raw)
+
+print(&#39;transformed pt ratios&#39;, corrected_jets.pt/corrected_jets.pt_raw)
+print(&#39;transformed mass ratios&#39;, corrected_jets.mass/corrected_jets.mass_raw)
+
+print(&#39;JES UP pt ratio&#39;, corrected_jets.JES_jes.up.pt/corrected_jets.pt_raw)
+print(&#39;JES DOWN pt ratio&#39;, corrected_jets.JES_jes.down.pt/corrected_jets.pt_raw)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+untransformed pt ratios [[1.12, 1.09, 1.2, 1.35, 1.27], [1.03, ... 1.28, 1.1, 1.13, 0.989], [1.13, 0.978]]
+untransformed mass ratios [[1.12, 1.09, 1.2, 1.35, 1.27], [1.03, ... 1.28, 1.1, 1.13, 0.989], [1.13, 0.978]]
+transformed pt ratios [[1.2, 1.3, 1.46, 2.09, 2.1], [1.09, 1.29, ... 1.84, 1.47, 1.36, 1.16], [1.37, 1.15]]
+transformed mass ratios [[1.2, 1.3, 1.46, 2.09, 2.1], [1.09, 1.29, ... 1.84, 1.47, 1.36, 1.16], [1.37, 1.15]]
+JES UP pt ratio [[1.22, 1.35, 1.56, 2.34, 2.37], [1.1, ... 2.07, 1.52, 1.41, 1.2], [1.41, 1.17]]
+JES DOWN pt ratio [[1.19, 1.25, 1.35, 1.83, 1.83], [1.08, ... 1.6, 1.41, 1.32, 1.13], [1.33, 1.12]]
+</pre></div></div>
+</div>
+</section>
+<section id="Applying-CMS-b-tagging-corrections-with-btag_tools">
+<h3>Applying CMS b-tagging corrections with btag_tools<a class="headerlink" href="#Applying-CMS-b-tagging-corrections-with-btag_tools" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">coffea.btag_tools</span></code> module provides the high-level utility <a class="reference external" href="https://coffeateam.github.io/coffea/api/coffea.btag_tools.BTagScaleFactor.html#coffea.btag_tools.BTagScaleFactor">BTagScaleFactor</a> which calculates per-jet weights for b-tagging as well as light flavor mis-tagging efficiencies. Uncertainties can be calculated as well.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from coffea.btag_tools import BTagScaleFactor
+
+btag_sf = BTagScaleFactor(&quot;data/DeepCSV_102XSF_V1.btag.csv.gz&quot;, &quot;medium&quot;)
+
+print(&quot;SF:&quot;, btag_sf.eval(&quot;central&quot;, events.Jet.hadronFlavour, abs(events.Jet.eta), events.Jet.pt))
+print(&quot;systematic +:&quot;, btag_sf.eval(&quot;up&quot;, events.Jet.hadronFlavour, abs(events.Jet.eta), events.Jet.pt))
+print(&quot;systematic -:&quot;, btag_sf.eval(&quot;down&quot;, events.Jet.hadronFlavour, abs(events.Jet.eta), events.Jet.pt))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SF: [[1.52, 1.56, 1.59, 1.6, 1.6], [0.969, 1.57, ... 1.59, 1.6, 1.6, 1.6], [1.6, 1.6]]
+systematic +: [[1.72, 1.77, 1.79, 1.8, 1.8], [1.01, 1.78, ... 1.8, 1.8, 1.8, 1.8], [1.8, 1.8]]
+systematic -: [[1.31, 1.36, 1.38, 1.4, 1.4], [0.925, 1.37, ... 1.39, 1.4, 1.4, 1.4], [1.4, 1.4]]
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="Using-correctionlib">
+<h2>Using correctionlib<a class="headerlink" href="#Using-correctionlib" title="Permalink to this heading"></a></h2>
+<p>For the most part, using correctionlib is straightforward. We’ll show here how to convert the custom correction we derived earlier (<code class="docutils literal notranslate"><span class="pre">corr</span></code>) into a correctionlib object, and save it in the json format:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import correctionlib, rich
+import correctionlib.convert
+
+# without a name, the resulting object will fail validation
+sfhist.name = &quot;gen2_to_gen1&quot;
+sfhist.label = &quot;out&quot;
+clibcorr = correctionlib.convert.from_histogram(sfhist)
+clibcorr.description = &quot;Reweights gen2 to agree with gen1&quot;
+# set overflow bins behavior (default is to raise an error when out of bounds)
+clibcorr.data.flow = &quot;clamp&quot;
+
+cset = correctionlib.schemav2.CorrectionSet(
+    schema_version=2,
+    description=&quot;my custom corrections&quot;,
+    corrections=[clibcorr],
+)
+rich.print(cset)
+
+with open(&quot;data/mycorrections.json&quot;, &quot;w&quot;) as fout:
+    fout.write(cset.json(exclude_unset=True))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">CorrectionSet</span> (<span style="font-style: italic">schema v2</span>)
+my custom corrections
+📂
+└── 📈 <span style="font-weight: bold">gen2_to_gen1</span> (v0)
+    Reweights gen2 to agree with gen1
+    Node counts: <span style="font-weight: bold">MultiBinning</span>: 1
+    ╭──────────── ▶ input ─────────────╮ ╭──────────── ▶ input ────────────╮
+    │ <span style="font-weight: bold">pt</span> (real)                        │ │ <span style="font-weight: bold">eta</span> (real)                      │
+    │ pt                               │ │ eta                             │
+    │ Range: [0.0, 100.0), overflow ok │ │ Range: [-3.0, 3.0), overflow ok │
+    ╰──────────────────────────────────╯ ╰─────────────────────────────────╯
+    ╭─── ◀ output ───╮
+    │ <span style="font-weight: bold">out</span> (real)     │
+    │ <span style="font-style: italic">No description</span> │
+    ╰────────────────╯
+</pre></div>
+</div>
+<p>We can now use this new correction in a similar way to the original <code class="docutils literal notranslate"><span class="pre">corr()</span></code> object:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ceval = cset.to_evaluator()
+
+ceval[&quot;gen2_to_gen1&quot;].evaluate(ptvals, etavals)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([1.55691586, 1.36319225, 1.36319225, ..., 1.55691586, 0.64304079,
+       1.02863368])
+</pre></div></div>
+</div>
+<p>At the time of writing, correctionlib does not support jagged arrays. But we can work around this using awkward utilities <code class="docutils literal notranslate"><span class="pre">flatten</span></code> and <code class="docutils literal notranslate"><span class="pre">unflatten</span></code>, as shown below</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def myJetSF(jets):
+    j, nj = ak.flatten(jets), ak.num(jets)
+    sf = ceval[&quot;gen2_to_gen1&quot;].evaluate(np.array(j.pt), np.array(j.eta))
+    return ak.unflatten(sf, nj)
+
+myJetSF(events.Jet)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Array [[0.498, 0.211, 0.86, ... [1.15, 1.17]] type=&#39;40 * var * float64&#39;&gt;
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nanoevents.html" class="btn btn-neutral float-left" title="Reading data with coffea NanoEvents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="accumulators.html" class="btn btn-neutral float-right" title="Analysis tools and accumulators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, Fermi National Accelerator Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

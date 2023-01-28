@@ -982,6 +982,9 @@ class Runner:
                 if skipbadfiles and isinstance(e, FileNotFoundError):
                     warnings.warn(str(e))
                     break
+                if skipbadfiles and isinstance(e, OSError) and (retries == retry_count):
+                    warnings.warn(str(e))
+                    break
                 if (
                     not skipbadfiles
                     or "Auth failed" in str(e)

@@ -48,8 +48,8 @@ class TestableExecutor(Executor):
         data_type: str,
         meta_data: Dict[str, str],
         process_func: Callable,
+        schema,
     ):
-
         # Record the tree name so we can verify it later
         self.tree_name = tree_name
         self.data_type = data_type
@@ -62,7 +62,7 @@ class MockDataSource:
         self.urls = urls
         self.metadata = {"item": "value"}
 
-    async def stream_result_file_urls(self, title):
+    async def stream_result_file_uris(self, title):
         for url in self.urls:
             yield url
 

@@ -1,5 +1,6 @@
 """Mixins for the CMS NanoAOD schema"""
 import awkward
+import warnings
 from coffea.nanoevents.methods import base, vector, candidate
 
 
@@ -87,15 +88,26 @@ class GenParticle(vector.PtEtaPhiMLorentzVector, base.NanoCollection):
 
     @property
     def distinctParent(self):
+        """Accessor to distinct (different PDG id) parent particle"""
         return self._events().GenPart._apply_global_index(self.distinctParentIdxG)
 
     @property
     def children(self):
+        """Accessor to child particles."""
         return self._events().GenPart._apply_global_index(self.childrenIdxG)
 
     @property
     def distinctChildren(self):
+        """Accessor to distinct (different PDG id) child particles"""
         return self._events().GenPart._apply_global_index(self.distinctChildrenIdxG)
+
+    @property
+    def distinctChildrenDeep(self):
+        """Accessor to distinct child particles with different PDG id, or last ones in the chain"""
+        warnings.warn(
+            "distinctChildrenDeep may not give correct answers for all generators!"
+        )
+        return self._events().GenPart._apply_global_index(self.distinctChildrenDeepIdxG)
 
 
 _set_repr_name("GenParticle")
@@ -115,7 +127,7 @@ _set_repr_name("GenVisTau")
 
 
 @awkward.mixin_class(behavior)
-class Electron(candidate.PtEtaPhiMCandidate, base.NanoCollection):
+class Electron(candidate.PtEtaPhiMCandidate, base.NanoCollection, base.Systematic):
     """NanoAOD electron object"""
 
     FAIL = 0
@@ -167,7 +179,7 @@ _set_repr_name("Electron")
 
 
 @awkward.mixin_class(behavior)
-class Muon(candidate.PtEtaPhiMCandidate, base.NanoCollection):
+class Muon(candidate.PtEtaPhiMCandidate, base.NanoCollection, base.Systematic):
     """NanoAOD muon object"""
 
     @property
@@ -187,7 +199,7 @@ _set_repr_name("Muon")
 
 
 @awkward.mixin_class(behavior)
-class Tau(candidate.PtEtaPhiMCandidate, base.NanoCollection):
+class Tau(candidate.PtEtaPhiMCandidate, base.NanoCollection, base.Systematic):
     """NanoAOD tau object"""
 
     @property
@@ -203,7 +215,7 @@ _set_repr_name("Tau")
 
 
 @awkward.mixin_class(behavior)
-class Photon(candidate.PtEtaPhiMCandidate, base.NanoCollection):
+class Photon(candidate.PtEtaPhiMCandidate, base.NanoCollection, base.Systematic):
     """NanoAOD photon object"""
 
     LOOSE = 0
@@ -215,7 +227,7 @@ class Photon(candidate.PtEtaPhiMCandidate, base.NanoCollection):
 
     @property
     def mass(self):
-        return awkward.without_parameters(awkward.zeros_like(self.pt))
+        return 0.0 * self.pt
 
     @property
     def isLoose(self):
@@ -261,7 +273,7 @@ _set_repr_name("FsrPhoton")
 
 
 @awkward.mixin_class(behavior)
-class Jet(vector.PtEtaPhiMLorentzVector, base.NanoCollection):
+class Jet(vector.PtEtaPhiMLorentzVector, base.NanoCollection, base.Systematic):
     """NanoAOD narrow radius jet object"""
 
     LOOSE = 0
@@ -309,7 +321,7 @@ _set_repr_name("Jet")
 
 
 @awkward.mixin_class(behavior)
-class FatJet(vector.PtEtaPhiMLorentzVector, base.NanoCollection):
+class FatJet(vector.PtEtaPhiMLorentzVector, base.NanoCollection, base.Systematic):
     """NanoAOD large radius jet object"""
 
     LOOSE = 0
@@ -353,7 +365,7 @@ _set_repr_name("FatJet")
 
 
 @awkward.mixin_class(behavior)
-class MissingET(vector.PolarTwoVector, base.NanoCollection):
+class MissingET(vector.PolarTwoVector, base.NanoCollection, base.Systematic):
     """NanoAOD Missing transverse energy object"""
 
     @property
@@ -365,10 +377,21 @@ _set_repr_name("MissingET")
 
 
 @awkward.mixin_class(behavior)
-class Vertex(vector.ThreeVector, base.NanoCollection):
+class Vertex(base.NanoCollection):
     """NanoAOD vertex object"""
 
-    pass
+    @property
+    def pos(self):
+        """Vertex position as a three vector"""
+        return awkward.zip(
+            {
+                "x": self["x"],
+                "y": self["y"],
+                "z": self["z"],
+            },
+            with_name="ThreeVector",
+            behavior=self.behavior,
+        )
 
 
 _set_repr_name("Vertex")
@@ -389,6 +412,7 @@ class SecondaryVertex(Vertex):
                 "mass": self["mass"],
             },
             with_name="PtEtaPhiMLorentzVector",
+            behavior=self.behavior,
         )
 
 

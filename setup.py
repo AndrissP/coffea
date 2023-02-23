@@ -57,19 +57,22 @@ def get_description():
 
 INSTALL_REQUIRES = [
     "awkward>=1.5.1,<2",
-    "uproot>=4.1.6",
+    "uproot>=4.1.6,==4.*,!=4.2.4,!=4.3.0,!=4.3.1",
     "uproot3-methods>=0.10.0",
     "uproot3>=3.14.1",
     "correctionlib>=2.0.0",
     "pyarrow>=1.0.0",
     "fsspec",
     "matplotlib>=3",
-    "numba>=0.50.0",
-    "numpy>=1.16.0,<1.22",  # <1.22 for numba version restrictions with 1.55 series
+    'numba>=0.50.0;python_version<"3.7"',
+    'numba>=0.56.0;python_version>"3.6"',
+    'numpy>=1.16.0,<1.22;python_version<"3.7"',  # <1.22 for numba version restrictions with 1.55 series
+    'numpy>=1.18.0;python_version>"3.6"',  # numba 1.56 available for python > 3.6, no upper numpy requirement
     "scipy>=1.1.0",
     "tqdm>=4.27.0",
     "lz4",
     "cloudpickle>=1.2.3",
+    "toml>=0.10.2",
     "mplhep>=0.1.18",
     "packaging",
     "pandas",
@@ -90,7 +93,8 @@ EXTRAS_REQUIRE["dask"] = [
 EXTRAS_REQUIRE["servicex"] = [
     "aiostream",
     "tenacity",
-    "func-adl_servicex==1.1.2",
+    "servicex>=2.5.3",
+    "func-adl_servicex",
 ]
 EXTRAS_REQUIRE["dev"] = [
     "flake8",
@@ -104,7 +108,9 @@ EXTRAS_REQUIRE["dev"] = [
     "nbsphinx",
     "sphinx-rtd-theme",
     "sphinx-automodapi",
+    "sphinx-copybutton>=0.3.2",
     "pyinstrument",
+    "ipython",
 ]
 
 setup(
@@ -139,6 +145,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Scientific/Engineering :: Mathematics",

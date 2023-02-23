@@ -56,12 +56,13 @@ class DaskExecutor(Executor):
         else:
             assert provided_dask_client.asynchronous
             self.dask = provided_dask_client
+            self.is_local = False
 
     def get_result_file_stream(self, datasource, title):
         if self.is_local:
             return datasource.stream_result_files(title)
         else:
-            return datasource.stream_result_file_urls(title)
+            return datasource.stream_result_file_uris(title)
 
     def run_async_analysis(
         self,
@@ -70,6 +71,7 @@ class DaskExecutor(Executor):
         data_type: str,
         meta_data: Dict[str, str],
         process_func: Callable,
+        schema,
     ):
         """Create a dask future for a dask task to run the analysis."""
         data_result = self.dask.submit(
@@ -79,6 +81,7 @@ class DaskExecutor(Executor):
             data_type=data_type,
             meta_data=meta_data,
             proc=process_func,
+            schema=schema,
         )
 
         return data_result

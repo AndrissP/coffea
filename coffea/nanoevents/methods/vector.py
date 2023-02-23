@@ -12,7 +12,6 @@ A small example::
     import numpy as np
     import awkward as ak
     from coffea.nanoevents.methods import vector
-    ak.behavior.update(vector.behavior)
 
     n = 1000
 
@@ -23,6 +22,7 @@ A small example::
             "z": np.random.normal(size=n),
         },
         with_name="ThreeVector",
+        behavior=vector.behavior,
     )
 
     vec4 = ak.zip(
@@ -33,6 +33,7 @@ A small example::
             "mass": np.full(n, 1.),
         },
         with_name="PtEtaPhiMLorentzVector",
+        behavior=vector.behavior,
     )
 
     assert np.allclose(np.array(vec4.x), np.array(vec.x))
@@ -135,6 +136,7 @@ class TwoVector:
         return awkward.zip(
             {"x": -self.x, "y": -self.y},
             with_name="TwoVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.add, {"TwoVector"})
@@ -143,27 +145,39 @@ class TwoVector:
         return awkward.zip(
             {"x": self.x + other.x, "y": self.y + other.y},
             with_name="TwoVector",
+            behavior=self.behavior,
         )
 
-    @awkward.mixin_class_method(numpy.subtract, {"TwoVector"})
+    @awkward.mixin_class_method(
+        numpy.subtract,
+        {
+            "TwoVector",
+            "ThreeVector",
+            "SphericalThreeVector",
+            "LorentzVector",
+            "PtEtaPhiMLorentzVector",
+            "PtEtaPhiELorentzVector",
+        },
+        transpose=False,
+    )
     def subtract(self, other):
         """Substract a vector from another elementwise using `x` and `y` compontents"""
         return awkward.zip(
             {"x": self.x - other.x, "y": self.y - other.y},
             with_name="TwoVector",
+            behavior=self.behavior,
         )
 
     def sum(self, axis=-1):
         """Sum an array of vectors elementwise using `x` and `y` components"""
-        out = awkward.zip(
+        return awkward.zip(
             {
                 "x": awkward.sum(self.x, axis=axis),
                 "y": awkward.sum(self.y, axis=axis),
             },
             with_name="TwoVector",
-            highlevel=False,
+            behavior=self.behavior,
         )
-        return awkward.Array(out, behavior=self.behavior)
 
     @awkward.mixin_class_method(numpy.multiply, {numbers.Number})
     def multiply(self, other):
@@ -171,6 +185,7 @@ class TwoVector:
         return awkward.zip(
             {"x": self.x * other, "y": self.y * other},
             with_name="TwoVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.divide, {numbers.Number})
@@ -254,6 +269,7 @@ class PolarTwoVector(TwoVector):
                 "phi": self.phi % (2 * numpy.pi) - (numpy.pi * (other < 0)),
             },
             with_name="PolarTwoVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.negative)
@@ -262,6 +278,7 @@ class PolarTwoVector(TwoVector):
         return awkward.zip(
             {"r": self.r, "phi": self.phi % (2 * numpy.pi) - numpy.pi},
             with_name="PolarTwoVector",
+            behavior=self.behavior,
         )
 
 
@@ -323,6 +340,7 @@ class ThreeVector(TwoVector):
         return awkward.zip(
             {"x": -self.x, "y": -self.y, "z": -self.z},
             with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.add, {"ThreeVector"})
@@ -331,28 +349,39 @@ class ThreeVector(TwoVector):
         return awkward.zip(
             {"x": self.x + other.x, "y": self.y + other.y, "z": self.z + other.z},
             with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
-    @awkward.mixin_class_method(numpy.subtract, {"ThreeVector"})
+    @awkward.mixin_class_method(
+        numpy.subtract,
+        {
+            "ThreeVector",
+            "SphericalThreeVector",
+            "LorentzVector",
+            "PtEtaPhiMLorentzVector",
+            "PtEtaPhiELorentzVector",
+        },
+        transpose=False,
+    )
     def subtract(self, other):
         """Subtract a vector from another elementwise using `x`, `y`, and `z` components"""
         return awkward.zip(
             {"x": self.x - other.x, "y": self.y - other.y, "z": self.z - other.z},
             with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
     def sum(self, axis=-1):
         """Sum an array of vectors elementwise using `x`, `y`, and `z` components"""
-        out = awkward.zip(
+        return awkward.zip(
             {
                 "x": awkward.sum(self.x, axis=axis),
                 "y": awkward.sum(self.y, axis=axis),
                 "z": awkward.sum(self.z, axis=axis),
             },
             with_name="ThreeVector",
-            highlevel=False,
+            behavior=self.behavior,
         )
-        return awkward.Array(out, behavior=self.behavior)
 
     @awkward.mixin_class_method(numpy.multiply, {numbers.Number})
     def multiply(self, other):
@@ -360,6 +389,7 @@ class ThreeVector(TwoVector):
         return awkward.zip(
             {"x": self.x * other, "y": self.y * other, "z": self.z * other},
             with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
     def dot(self, other):
@@ -375,6 +405,7 @@ class ThreeVector(TwoVector):
                 "z": self.x * other.y - self.y * other.x,
             },
             with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
     @property
@@ -446,6 +477,7 @@ class SphericalThreeVector(ThreeVector, PolarTwoVector):
                 "phi": self.phi % (2 * numpy.pi) - numpy.pi * (other < 0),
             },
             with_name="SphericalThreeVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.negative)
@@ -458,6 +490,7 @@ class SphericalThreeVector(ThreeVector, PolarTwoVector):
                 "phi": self.phi % (2 * numpy.pi) - numpy.pi,
             },
             with_name="SphericalThreeVector",
+            behavior=self.behavior,
         )
 
 
@@ -515,9 +548,10 @@ class LorentzVector(ThreeVector):
                 "t": self.t + other.t,
             },
             with_name="LorentzVector",
+            behavior=self.behavior,
         )
 
-    @awkward.mixin_class_method(numpy.subtract, {"LorentzVector"})
+    @awkward.mixin_class_method(numpy.subtract, {"LorentzVector"}, transpose=False)
     def subtract(self, other):
         """Subtract a vector from another elementwise using `x`, `y`, `z`, and `t` components"""
         return awkward.zip(
@@ -528,11 +562,12 @@ class LorentzVector(ThreeVector):
                 "t": self.t - other.t,
             },
             with_name="LorentzVector",
+            behavior=self.behavior,
         )
 
     def sum(self, axis=-1):
         """Sum an array of vectors elementwise using `x`, `y`, `z`, and `t` components"""
-        out = awkward.zip(
+        return awkward.zip(
             {
                 "x": awkward.sum(self.x, axis=axis),
                 "y": awkward.sum(self.y, axis=axis),
@@ -540,9 +575,8 @@ class LorentzVector(ThreeVector):
                 "t": awkward.sum(self.t, axis=axis),
             },
             with_name="LorentzVector",
-            highlevel=False,
+            behavior=self.behavior,
         )
-        return awkward.Array(out, behavior=self.behavior)
 
     @awkward.mixin_class_method(numpy.multiply, {numbers.Number})
     def multiply(self, other):
@@ -555,6 +589,7 @@ class LorentzVector(ThreeVector):
                 "t": self.t * other,
             },
             with_name="LorentzVector",
+            behavior=self.behavior,
         )
 
     def delta_r2(self, other):
@@ -576,13 +611,16 @@ class LorentzVector(ThreeVector):
         return awkward.zip(
             {"x": -self.x, "y": -self.y, "z": -self.z, "t": -self.t},
             with_name="LorentzVector",
+            behavior=self.behavior,
         )
 
     @property
     def pvec(self):
         """The `x`, `y` and `z` compontents as a `ThreeVector`"""
         return awkward.zip(
-            {"x": self.x, "y": self.y, "z": self.z}, with_name="ThreeVector"
+            {"x": self.x, "y": self.y, "z": self.z},
+            with_name="ThreeVector",
+            behavior=self.behavior,
         )
 
     @property
@@ -616,7 +654,7 @@ class LorentzVector(ThreeVector):
         t = self.t
         v = gamma2 * bp * other + t * gamma * other
 
-        out = awkward.zip(
+        return awkward.zip(
             {
                 "x": self.x + v.x,
                 "y": self.y + v.y,
@@ -624,8 +662,8 @@ class LorentzVector(ThreeVector):
                 "t": gamma * (t + bp),
             },
             with_name="LorentzVector",
+            behavior=self.behavior,
         )
-        return out
 
     def metric_table(
         self, other, axis=1, metric=lambda a, b: a.delta_r(b), return_combinations=False
@@ -710,6 +748,11 @@ class PtEtaPhiMLorentzVector(LorentzVector, SphericalThreeVector):
     This mixin class requires the parent class to provide items `pt`, `eta`, `phi`, and `mass`.
     Some additional properties are overridden for performance
     """
+
+    @property
+    def E(self):
+        """Alias for `t`"""
+        return self.t
 
     @property
     def pt(self):
@@ -805,6 +848,7 @@ class PtEtaPhiMLorentzVector(LorentzVector, SphericalThreeVector):
                 "mass": self.mass * absother,
             },
             with_name="PtEtaPhiMLorentzVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.negative)
@@ -818,6 +862,7 @@ class PtEtaPhiMLorentzVector(LorentzVector, SphericalThreeVector):
                 "mass": self.mass,
             },
             with_name="PtEtaPhiMLorentzVector",
+            behavior=self.behavior,
         )
 
 
@@ -828,6 +873,11 @@ class PtEtaPhiELorentzVector(LorentzVector, SphericalThreeVector):
     This mixin class requires the parent class to provide items `pt`, `eta`, `phi`, and `energy`.
     Some additional properties are overridden for performance
     """
+
+    @property
+    def E(self):
+        """Alias for `t`"""
+        return self.t
 
     @property
     def pt(self):
@@ -914,6 +964,7 @@ class PtEtaPhiELorentzVector(LorentzVector, SphericalThreeVector):
                 "energy": self.energy * other,
             },
             with_name="PtEtaPhiELorentzVector",
+            behavior=self.behavior,
         )
 
     @awkward.mixin_class_method(numpy.negative)
@@ -927,6 +978,7 @@ class PtEtaPhiELorentzVector(LorentzVector, SphericalThreeVector):
                 "energy": -self.energy,
             },
             with_name="PtEtaPhiELorentzVector",
+            behavior=self.behavior,
         )
 
 
